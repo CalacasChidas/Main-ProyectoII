@@ -4,48 +4,62 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <cstdlib>
 
 GtkWidget *window;
-GtkWidget *entryMessage1;
-GtkWidget *entryMessage2;
-GtkWidget *buttonSend;
+GtkWidget *botones[10][10], *botonPrueba;
+GtkLabel *cantKoban;
 int clientSocket;
+int cantK = 1 + rand() % 100;
+char buffer[10];
 
-static void send_message(GtkWidget *widget, gpointer data) {
-    const char *message1 = gtk_entry_get_text(GTK_ENTRY(entryMessage1));
-    const char *message2 = gtk_entry_get_text(GTK_ENTRY(entryMessage2));
 
-    // Enviar la palabra clave "suma" al servidor
-    if (send(clientSocket, "suma", strlen("suma"), 0) == -1) {
-        std::cerr << "Error al enviar datos al servidor" << std::endl;
-        return;
+void on_button_clicked(GtkWidget *widget, gpointer data) {
+    std::cout<<"Funciona\n";
+    const gchar *nombre = gtk_widget_get_name(widget);
+    if (nombre != nullptr) {
+        // Imprimir el nombre del botón
+        std::cout << "Nombre del botón: " << nombre << std::endl;
     }
-
-    // Enviar los dos números al servidor
-    if (send(clientSocket, message1, strlen(message1), 0) == -1 || send(clientSocket, message2, strlen(message2), 0) == -1) {
-        std::cerr << "Error al enviar datos al servidor" << std::endl;
-        return;
+    /*
+    const gchar *nombre = gtk_widget_get_name(widget);
+    if (nombre != nullptr && strncmp(nombre, "b", 1) == 0) {
+        // Extraer la fila y la columna del nombre del botón
+        int fila, columna;
+        if (sscanf(nombre + 1, "%d%d", &fila, &columna) == 2) {
+            // Imprimir las coordenadas
+            std::cout << "Fila: " << fila << ", Columna: " << columna << std::endl;
+        }
     }
-
-    char buffer[1024] = {0};
-    if (recv(clientSocket, buffer, sizeof(buffer), 0) > 0) {
-        // Mostrar el resultado de la suma del servidor
-        std::cout << "Resultado de la suma: " << buffer << std::endl;
-    }
+     */
 }
-
 int main(int argc, char *argv[]) {
+    sprintf(buffer, "%d", cantK);
     GtkBuilder *builder;
     gtk_init(&argc, &argv);
-
     builder = gtk_builder_new();
     gtk_builder_add_from_file(builder, "/home/aleprominecraft/Documents/github/Main-ProyectoII/GladeProyectoII.glade", NULL);
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
-    entryMessage1 = GTK_WIDGET(gtk_builder_get_object(builder, "entryMessage1"));
-    entryMessage2 = GTK_WIDGET(gtk_builder_get_object(builder, "entryMessage2"));
-    buttonSend = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSend"));
 
-    g_signal_connect(buttonSend, "clicked", G_CALLBACK(send_message), NULL);
+    //Declaración de objetos
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
+    GtkWidget *grid = gtk_grid_new();
+
+    for (int fila = 0; fila < 10; fila++) {
+        for (int columna = 0; columna < 10; columna++) {
+            char nombreBoton[20];
+            sprintf(nombreBoton, "b%d%d", fila, columna);
+            botones[fila][columna] = GTK_WIDGET(gtk_builder_get_object(builder, nombreBoton));
+            std::cout<<nombreBoton;
+
+            g_signal_connect(G_OBJECT(botones[fila][columna]), "clicked", G_CALLBACK(on_button_clicked), NULL);
+        }
+    }
+    botonPrueba = GTK_WIDGET(gtk_builder_get_object(builder, "BotonPrueba"));
+    g_signal_connect(G_OBJECT(botonPrueba), "clicked", G_CALLBACK(on_button_clicked), NULL);
+
+    cantKoban = GTK_LABEL(gtk_builder_get_object(builder, "cantKoban"));
+    gtk_label_set_text(cantKoban, buffer);
+
 
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
@@ -76,6 +90,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
 
 
 
