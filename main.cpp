@@ -198,7 +198,7 @@ struct Samurai {
 
 void on_button_clicked(GtkWidget *widget, gpointer data) {
     sprintf(buffer, "%d", cantK);
-    if (obstavailable>0){
+    if (obstavailable>0&&cantK>0){
         switch (obstype) {
             // Verificamos si el widget es un botón
             case 1:
@@ -244,7 +244,7 @@ gboolean clearLabelCallback(gpointer data) {
 void yari(GtkWidget *widget, gpointer data) {
     obstype = 1;
     std::cout<< "Obstáculo seleccionado: Yari\n";
-    gtk_label_set_text(advertencias, "YObstáculo seleccionado: Yari");
+    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Yari");
     g_timeout_add(1000, clearLabelCallback, NULL);
 }
 void ayf(GtkWidget *widget, gpointer data) {
@@ -420,7 +420,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Tiempo de ejecución: " << duration.count() << " segundos" << std::endl;
 
-    /*
+
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (clientSocket == -1) {
@@ -440,7 +440,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::cout << "Conectado al servidor." << std::endl;
-    */
+
 
     gtk_builder_connect_signals(builder, NULL);
     g_object_unref(builder);
@@ -452,9 +452,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-
-
-
-
-
