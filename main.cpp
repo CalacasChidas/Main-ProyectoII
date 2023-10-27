@@ -31,71 +31,6 @@ int clientSocket, obstype;
 int cantK = 9, cantiter = 0, tercios = 0;
 char buffer[10];
 
-void on_button_clicked(GtkWidget *widget, gpointer data) {
-    switch (obstype) {
-        // Verificamos si el widget es un botón
-        case 1:
-            gtk_button_set_label(GTK_BUTTON(widget), "1");
-            obstype = 0;
-            cantK --;
-            //gtk_label_set_text(cantKoban, );
-            gtk_label_set_text(advertencias, " ");
-            break;
-        case 2:
-            gtk_button_set_label(GTK_BUTTON(widget), "2");
-            obstype = 0;
-            gtk_label_set_text(advertencias, " ");
-            break;
-        case 3:
-            gtk_button_set_label(GTK_BUTTON(widget), "3");
-            obstype = 0;
-            gtk_label_set_text(advertencias, " ");
-            break;
-        default:
-            gtk_label_set_text(advertencias, "Seleccione un obstáculo primero!");
-            std::cout << "Obstáculo no seleccionado\n";
-            break;
-    }
-}
-
-gboolean clearLabelCallback(gpointer data) {
-    // Esta función se ejecutará después de 2 segundos
-    gtk_label_set_text(advertencias, " ");
-    return G_SOURCE_REMOVE;  // Indica que se debe eliminar la fuente de temporización
-}
-
-void yari(GtkWidget *widget, gpointer data) {
-    obstype = 1;
-    std::cout<< "Obstáculo seleccionado: Yari\n";
-    gtk_label_set_text(advertencias, "YObstáculo seleccionado: Yari");
-    g_timeout_add(1000, clearLabelCallback, NULL);
-}
-void ayf(GtkWidget *widget, gpointer data) {
-    obstype = 2;
-    std::cout<< "Obstáculo seleccionado: Arco y flecha\n";
-    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Arco y flecha");
-    g_timeout_add(1000, clearLabelCallback, NULL);
-}
-void tna(GtkWidget *widget, gpointer data) {
-    obstype = 3;
-    std::cout<< "Obstáculo seleccionado: Tanegashima\n";
-    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Tanegashima");
-    g_timeout_add(1000, clearLabelCallback, NULL);
-}
-void iteraciones(GtkWidget *widget, gpointer data) {
-    if(tercios == 3){
-        cantiter++;
-        tercios = 0;
-        std::cout<<"Iterando, se han cumplido 3 iteraciones\n";
-        gtk_label_set_text(advertencias, "+9 konan!");
-        g_timeout_add(2000, clearLabelCallback, NULL);
-    }else{
-        cantiter++;
-        tercios++;
-        std::cout<<"Iterando\n";
-    }
-}
-
 int suma(int a, int b) {
     return a + b;
 }
@@ -261,6 +196,102 @@ struct Samurai {
 
 };
 
+void on_button_clicked(GtkWidget *widget, gpointer data) {
+    switch (obstype) {
+        // Verificamos si el widget es un botón
+        case 1:
+            gtk_button_set_label(GTK_BUTTON(widget), "1");
+            obstype = 0;
+            cantK --;
+            //gtk_label_set_text(cantKoban, );
+            gtk_label_set_text(advertencias, " ");
+            break;
+        case 2:
+            gtk_button_set_label(GTK_BUTTON(widget), "2");
+            obstype = 0;
+            gtk_label_set_text(advertencias, " ");
+            break;
+        case 3:
+            gtk_button_set_label(GTK_BUTTON(widget), "3");
+            obstype = 0;
+            gtk_label_set_text(advertencias, " ");
+            break;
+        default:
+            gtk_label_set_text(advertencias, "Seleccione un obstáculo primero!");
+            std::cout << "Obstáculo no seleccionado\n";
+            break;
+    }
+}
+
+gboolean clearLabelCallback(gpointer data) {
+    // Esta función se ejecutará después de 2 segundos
+    gtk_label_set_text(advertencias, " ");
+    return G_SOURCE_REMOVE;  // Indica que se debe eliminar la fuente de temporización
+}
+
+void yari(GtkWidget *widget, gpointer data) {
+    obstype = 1;
+    std::cout<< "Obstáculo seleccionado: Yari\n";
+    gtk_label_set_text(advertencias, "YObstáculo seleccionado: Yari");
+    g_timeout_add(1000, clearLabelCallback, NULL);
+}
+void ayf(GtkWidget *widget, gpointer data) {
+    obstype = 2;
+    std::cout<< "Obstáculo seleccionado: Arco y flecha\n";
+    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Arco y flecha");
+    g_timeout_add(1000, clearLabelCallback, NULL);
+}
+void tna(GtkWidget *widget, gpointer data) {
+    obstype = 3;
+    std::cout<< "Obstáculo seleccionado: Tanegashima\n";
+    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Tanegashima");
+    g_timeout_add(1000, clearLabelCallback, NULL);
+}
+void iteraciones(GtkWidget *widget, gpointer data) {
+    if(tercios == 3){
+        cantiter++;
+        tercios = 0;
+        std::cout<<"Iterando, se han cumplido 3 iteraciones\n";
+        gtk_label_set_text(advertencias, "+9 konan!");
+        g_timeout_add(2000, clearLabelCallback, NULL);
+    }else{
+        cantiter++;
+        tercios++;
+        std::cout<<"Iterando\n";
+        int matrix[10][10]; // Declara la matrix 10x10
+        int cont = 0;
+        srand(time(0));
+
+        // Inicia la matriz con ceros
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                matrix[i][j] = 0;
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            matrix[rand() % 10][rand() % 10] = 1;
+        }
+
+        // Defina el punto de inicio y de llegada de los samurai
+        int startX = 0;
+        int startY = 0;
+        int targetX = 9;
+        int targetY = 9;
+
+        vector<pair<int, int>> path = findPath(matrix, startX, startY, targetX, targetY);
+
+        // Enseña el camino del samurai
+        cout << "Camino del samurai (usando pathfinding): ";
+        for (const auto& point : path) {
+            cout << "(" << point.first << ", " << point.second << ") ";
+        }
+        cout << endl;
+
+        std::srand(static_cast<unsigned>(std::time(0)));
+
+    }
+}
 
 int main(int argc, char *argv[]) {
     sprintf(buffer, "%d", cantK);
@@ -333,14 +364,6 @@ int main(int argc, char *argv[]) {
     cout << endl;
 
     std::srand(static_cast<unsigned>(std::time(0)));
-
-    const int numGenerations = 5;
-
-    Samurai bestSamurai(1);  // El primer samurái es el mejor en la primera generación
-
-    for (int generation = 1; generation <= numGenerations; generation++) {
-        bestSamurai = Samurai(generation); // Generar un nuevo samurái con el uniqueId cambiado para la generación actual
-    }
 
     int inputX = 0;
     int inputY = 0;
