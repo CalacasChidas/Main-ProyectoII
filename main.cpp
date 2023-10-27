@@ -21,7 +21,23 @@
 #include <thread>
 #include <chrono>
 #include <functional>
+#include <string>
+#include <boost/asio.hpp>
+#include <random>
+#include <thread>
+#include <atomic>
+
 using namespace std;
+using namespace boost::asio;
+
+std::thread sendSThread;
+std::atomic<bool> sendSFlag(true);
+
+io_service io;
+serial_port serial(io);
+
+std::default_random_engine generator;
+std::uniform_int_distribution<int> distribution(1, 3);
 
 GtkWidget *window;
 GtkWidget *botones[10][10], *iter, *yr, *af, *tn;
@@ -29,7 +45,24 @@ GtkComboBoxText *obstaculos;
 GtkLabel *cantKoban, *advertencias;
 int clientSocket, obstype;
 int cantK = 9, cantiter = 0, tercios = 0, obstavailable = 3;
-char buffer[10];
+char sendBuffer[10];
+
+void sendData(const string& data) {
+    write(serial, buffer(data.c_str(), data.size()));
+}
+
+// Function to send "S" to the Arduino when receiving damage
+void sendS() {
+    while (sendSFlag.load()) {
+        int randomDelay = distribution(generator);
+
+        // Sleep for the generated delay
+        std::this_thread::sleep_for(std::chrono::seconds(randomDelay));
+
+        // Send "S" to the Arduino
+        sendData("S");
+    }
+}
 
 int suma(int a, int b) {
     return a + b;
@@ -197,7 +230,7 @@ struct Samurai {
 };
 
 void on_button_clicked(GtkWidget *widget, gpointer data) {
-    sprintf(buffer, "%d", cantK);
+    sprintf(sendBuffer, "%d", cantK);
     if (obstavailable>0&&cantK>0){
         switch (obstype) {
             // Verificamos si el widget es un botón
@@ -206,7 +239,7 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
                 obstype = 0;
                 cantK--;
                 obstavailable--;
-                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(cantKoban, sendBuffer);
                 gtk_label_set_text(advertencias, " ");
                 break;
             case 2:
@@ -214,7 +247,7 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
                 obstype = 0;
                 cantK = cantK - 2;
                 obstavailable--;
-                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(cantKoban, sendBuffer);
                 gtk_label_set_text(advertencias, " ");
                 break;
             case 3:
@@ -222,7 +255,7 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
                 obstype = 0;
                 cantK = cantK - 3;
                 obstavailable--;
-                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(cantKoban, sendBuffer);
                 gtk_label_set_text(advertencias, " ");
                 break;
             default:
@@ -261,14 +294,35 @@ void tna(GtkWidget *widget, gpointer data) {
 }
 
 void iteraciones(GtkWidget *widget, gpointer data) {
-    sprintf(buffer, "%d", cantK);
+    sprintf(sendBuffer, "%d", cantK);
+    static int units = 0;
+    static char tens = 'A';
+
+    // Convert units and tens to strings
+    string unitsStr = to_string(units);
+    string tensStr(1, tens); // Convert char to a string
+
+    // Send the data to Arduino
+    sendData(unitsStr); // Send units as a string
+    sendData(tensStr);  // Send tens as a string
+
+    units++;
+
+    if (units >= 10) {
+        units = 0;
+        tens++;
+        if (tens > 'J') {
+            tens = 'A';
+        }
+    }
+    sprintf(sendBuffer, "%d", cantK);
     if(tercios == 3){
         cantiter++;
         tercios = 0;
         std::cout<<"Iterando, se han cumplido 3 iteraciones\n";
         gtk_label_set_text(advertencias, "+9 konan!");
         cantK = cantK + 9;
-        gtk_label_set_text(cantKoban, buffer);
+        gtk_label_set_text(cantKoban, sendBuffer);
         g_timeout_add(2000, clearLabelCallback, NULL);
         for (int fila = 0; fila < 10; fila++) {
             for (int columna = 0; columna < 10; columna++) {
@@ -326,14 +380,30 @@ void iteraciones(GtkWidget *widget, gpointer data) {
 }
 
 int main(int argc, char *argv[]) {
-    sprintf(buffer, "%d", cantK);
+    sprintf(sendBuffer, "%d", cantK);
     GtkBuilder *builder;
     gtk_init(&argc, &argv);
     builder = gtk_builder_new();
-    gtk_builder_add_from_file(builder, "/home/aleprominecraft/Documents/github/Main-ProyectoII/GladeProyectoII.glade", NULL);
+    gtk_builder_add_from_file(builder, "/home/jct/Documents/Main-ProyectoII/GladeProyectoII.glade", NULL);
 
     //Declaración de objetos
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
+
+    // Initialize the Arduino connection
+    try {
+        serial.open("/dev/ttyUSB0");  // Replace with your actual port
+        serial.set_option(serial_port_base::baud_rate(9600)); // Adjust the baud rate
+
+        if (!serial.is_open()) {
+            cerr << "Error opening the serial port." << endl;
+            return 1;
+        }
+
+        cout << "Connected to Arduino." << endl;
+    } catch (const std::exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+        return 1;
+    }
 
 
     for (int fila = 0; fila < 10; fila++) {
@@ -360,10 +430,12 @@ int main(int argc, char *argv[]) {
     tn = GTK_WIDGET(gtk_builder_get_object(builder, "tn"));
     g_signal_connect(G_OBJECT(tn), "clicked", G_CALLBACK(tna), NULL);
 
+    sendSThread = std::thread(sendS);
+
 
     cantKoban = GTK_LABEL(gtk_builder_get_object(builder, "cantKoban"));
     advertencias = GTK_LABEL(gtk_builder_get_object(builder, "advertencias"));
-    gtk_label_set_text(cantKoban, buffer);
+    gtk_label_set_text(cantKoban, sendBuffer);
 
     int matrix[10][10]; // Declara la matrix 10x10
     int cont = 0;
