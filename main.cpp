@@ -288,7 +288,16 @@ void iteraciones(GtkWidget *widget, gpointer data) {
         }
         cout << endl;
 
+        cout << "Camino del samurai (usando backtracking): ";
+        for (const auto& point : path) {
+            cout << "(" << point.first << ", " << point.second << ") ";
+        }
+        cout << endl;
+
         std::srand(static_cast<unsigned>(std::time(0)));
+
+
+
 
     }
 }
