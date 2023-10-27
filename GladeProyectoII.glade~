@@ -35,8 +35,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <child>
-              <object class="GtkButton" id="b00">
-                <property name="label" translatable="yes">button</property>
+              <object class="GtkButton">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -1223,8 +1222,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="b99">
-                <property name="label" translatable="yes">button</property>
+              <object class="GtkButton">
+                <property name="label" translatable="yes">
+</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -1290,11 +1290,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="iteración">
+              <object class="GtkButton" id="iteracion">
                 <property name="label" translatable="yes">Iteración</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <signal name="clicked" handler="iteracion" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

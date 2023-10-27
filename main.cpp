@@ -11,33 +11,45 @@ GtkWidget *botones[10][10], *iter, *yr, *af, *tn;
 GtkComboBoxText *obstaculos;
 GtkLabel *cantKoban, *advertencias;
 int clientSocket, obstype;
-int cantK = 9, cantiter = 0, tercios = 0;
+int cantK = 9, cantiter = 0, tercios = 0, obstavailable = 3;
 char buffer[10];
 
 void on_button_clicked(GtkWidget *widget, gpointer data) {
-    switch (obstype) {
-        // Verificamos si el widget es un botón
-        case 1:
-            gtk_button_set_label(GTK_BUTTON(widget), "1");
-            obstype = 0;
-            cantK --;
-            //gtk_label_set_text(cantKoban, );
-            gtk_label_set_text(advertencias, " ");
-            break;
-        case 2:
-            gtk_button_set_label(GTK_BUTTON(widget), "2");
-            obstype = 0;
-            gtk_label_set_text(advertencias, " ");
-            break;
-        case 3:
-            gtk_button_set_label(GTK_BUTTON(widget), "3");
-            obstype = 0;
-            gtk_label_set_text(advertencias, " ");
-            break;
-        default:
-            gtk_label_set_text(advertencias, "Seleccione un obstáculo primero!");
-            std::cout << "Obstáculo no seleccionado\n";
-            break;
+    sprintf(buffer, "%d", cantK);
+    if (obstavailable>0){
+        switch (obstype) {
+            // Verificamos si el widget es un botón
+            case 1:
+                gtk_button_set_label(GTK_BUTTON(widget), "1");
+                obstype = 0;
+                cantK--;
+                obstavailable--;
+                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(advertencias, " ");
+                break;
+            case 2:
+                gtk_button_set_label(GTK_BUTTON(widget), "2");
+                obstype = 0;
+                cantK = cantK - 2;
+                obstavailable--;
+                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(advertencias, " ");
+                break;
+            case 3:
+                gtk_button_set_label(GTK_BUTTON(widget), "3");
+                obstype = 0;
+                cantK = cantK - 3;
+                obstavailable--;
+                gtk_label_set_text(cantKoban, buffer);
+                gtk_label_set_text(advertencias, " ");
+                break;
+            default:
+                gtk_label_set_text(advertencias, "Seleccione un obstáculo primero!");
+                std::cout << "Obstáculo no seleccionado\n";
+                break;
+        }
+    }else{
+        gtk_label_set_text(advertencias, "Cantidad de objetos máxima alcanzada");
     }
 }
 
@@ -65,19 +77,31 @@ void tna(GtkWidget *widget, gpointer data) {
     gtk_label_set_text(advertencias, "Obstáculo seleccionado: Tanegashima");
     g_timeout_add(1000, clearLabelCallback, NULL);
 }
+
 void iteraciones(GtkWidget *widget, gpointer data) {
+    sprintf(buffer, "%d", cantK);
     if(tercios == 3){
         cantiter++;
         tercios = 0;
         std::cout<<"Iterando, se han cumplido 3 iteraciones\n";
         gtk_label_set_text(advertencias, "+9 konan!");
+        cantK = cantK + 9;
+        gtk_label_set_text(cantKoban, buffer);
         g_timeout_add(2000, clearLabelCallback, NULL);
+        for (int fila = 0; fila < 10; fila++) {
+            for (int columna = 0; columna < 10; columna++) {
+                gtk_button_set_label(GTK_BUTTON(botones[fila][columna]), " ");
+            }
+        }
+
     }else{
         cantiter++;
         tercios++;
+        obstavailable = obstavailable+3;
         std::cout<<"Iterando\n";
     }
 }
+
 int main(int argc, char *argv[]) {
     sprintf(buffer, "%d", cantK);
     GtkBuilder *builder;
@@ -96,7 +120,7 @@ int main(int argc, char *argv[]) {
             botones[fila][columna] = GTK_WIDGET(gtk_builder_get_object(builder, nombreBoton));
 
             //std::cout<<nombreBoton;
-
+            gtk_button_set_label(GTK_BUTTON(botones[fila][columna]), " ");
             g_signal_connect(G_OBJECT(botones[fila][columna]), "clicked", G_CALLBACK(on_button_clicked), NULL);
         }
     }
