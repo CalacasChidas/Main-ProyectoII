@@ -20,7 +20,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
-
+#include <functional>
 using namespace std;
 
 GtkWidget *window;
@@ -330,7 +330,7 @@ int main(int argc, char *argv[]) {
     GtkBuilder *builder;
     gtk_init(&argc, &argv);
     builder = gtk_builder_new();
-    gtk_builder_add_from_file(builder, "/home/tomeito/CLionProjects/Main-ProyectoII/GladeProyectoII.glade", NULL);
+    gtk_builder_add_from_file(builder, "/home/aleprominecraft/Documents/github/Main-ProyectoII/GladeProyectoII.glade", NULL);
 
     //Declaración de objetos
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
@@ -420,7 +420,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Tiempo de ejecución: " << duration.count() << " segundos" << std::endl;
 
-    /* LO DEL SOCKET
+    /*
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (clientSocket == -1) {
@@ -441,6 +441,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Conectado al servidor." << std::endl;
     */
+
     gtk_builder_connect_signals(builder, NULL);
     g_object_unref(builder);
 
