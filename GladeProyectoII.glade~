@@ -1290,10 +1290,56 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="iteración">
+                <property name="label" translatable="yes">button</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkComboBoxText" id="obstaculos">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tearoff-title" translatable="yes">Obstáculos</property>
+                <property name="has-entry">True</property>
+                <items>
+                  <item id="yari" translatable="yes">Yari</item>
+                  <item id="ayf" translatable="yes">Arco y flechas</item>
+                  <item id="tng" translatable="yes">Tanegashima</item>
+                </items>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="can-focus">False</property>
+                    <property name="text" translatable="yes">Arco y flechas</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="advertencias">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans Bold 15"/>
+                  <attribute name="foreground" value="#eded33333b3b"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
+              </packing>
             </child>
           </object>
           <packing>

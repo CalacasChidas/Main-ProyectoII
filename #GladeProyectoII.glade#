@@ -1290,7 +1290,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="iteración">
+              <object class="GtkButton" id="iteracion">
                 <property name="label" translatable="yes">Iteración</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
