@@ -11,7 +11,7 @@ GtkWidget *botones[10][10], *iter, *yr, *af, *tn;
 GtkComboBoxText *obstaculos;
 GtkLabel *cantKoban, *advertencias;
 int clientSocket, obstype;
-int cantK = 9;
+int cantK = 9, cantiter = 0, tercios = 0;
 char buffer[10];
 
 void on_button_clicked(GtkWidget *widget, gpointer data) {
@@ -20,6 +20,8 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
         case 1:
             gtk_button_set_label(GTK_BUTTON(widget), "1");
             obstype = 0;
+            cantK --;
+            //gtk_label_set_text(cantKoban, );
             gtk_label_set_text(advertencias, " ");
             break;
         case 2:
@@ -38,19 +40,44 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
             break;
     }
 }
+
+gboolean clearLabelCallback(gpointer data) {
+    // Esta función se ejecutará después de 2 segundos
+    gtk_label_set_text(advertencias, " ");
+    return G_SOURCE_REMOVE;  // Indica que se debe eliminar la fuente de temporización
+}
+
 void yari(GtkWidget *widget, gpointer data) {
     obstype = 1;
     std::cout<< "Obstáculo seleccionado: Yari\n";
+    gtk_label_set_text(advertencias, "YObstáculo seleccionado: Yari");
+    g_timeout_add(1000, clearLabelCallback, NULL);
 }
 void ayf(GtkWidget *widget, gpointer data) {
     obstype = 2;
     std::cout<< "Obstáculo seleccionado: Arco y flecha\n";
+    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Arco y flecha");
+    g_timeout_add(1000, clearLabelCallback, NULL);
 }
 void tna(GtkWidget *widget, gpointer data) {
     obstype = 3;
     std::cout<< "Obstáculo seleccionado: Tanegashima\n";
+    gtk_label_set_text(advertencias, "Obstáculo seleccionado: Tanegashima");
+    g_timeout_add(1000, clearLabelCallback, NULL);
 }
-
+void iteraciones(GtkWidget *widget, gpointer data) {
+    if(tercios == 3){
+        cantiter++;
+        tercios = 0;
+        std::cout<<"Iterando, se han cumplido 3 iteraciones\n";
+        gtk_label_set_text(advertencias, "+9 konan!");
+        g_timeout_add(2000, clearLabelCallback, NULL);
+    }else{
+        cantiter++;
+        tercios++;
+        std::cout<<"Iterando\n";
+    }
+}
 int main(int argc, char *argv[]) {
     sprintf(buffer, "%d", cantK);
     GtkBuilder *builder;
@@ -67,6 +94,7 @@ int main(int argc, char *argv[]) {
             char nombreBoton[20];
             sprintf(nombreBoton, "b%d%d", fila, columna);
             botones[fila][columna] = GTK_WIDGET(gtk_builder_get_object(builder, nombreBoton));
+
             //std::cout<<nombreBoton;
 
             g_signal_connect(G_OBJECT(botones[fila][columna]), "clicked", G_CALLBACK(on_button_clicked), NULL);
@@ -74,7 +102,7 @@ int main(int argc, char *argv[]) {
     }
 
     iter = GTK_WIDGET(gtk_builder_get_object(builder, "iteracion"));
-    g_signal_connect(G_OBJECT(iter), "clicked", G_CALLBACK(on_button_clicked), NULL);
+    g_signal_connect(G_OBJECT(iter), "clicked", G_CALLBACK(iteraciones), NULL);
 
     yr = GTK_WIDGET(gtk_builder_get_object(builder, "yr"));
     g_signal_connect(G_OBJECT(yr), "clicked", G_CALLBACK(yari), NULL);
@@ -89,7 +117,7 @@ int main(int argc, char *argv[]) {
     cantKoban = GTK_LABEL(gtk_builder_get_object(builder, "cantKoban"));
     advertencias = GTK_LABEL(gtk_builder_get_object(builder, "advertencias"));
     gtk_label_set_text(cantKoban, buffer);
-
+    /* LO DEL SOCKET
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (clientSocket == -1) {
@@ -109,7 +137,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::cout << "Conectado al servidor." << std::endl;
-
+    */
     gtk_builder_connect_signals(builder, NULL);
     g_object_unref(builder);
 
