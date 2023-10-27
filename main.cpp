@@ -137,10 +137,12 @@ vector<pair<int, int>> findPath(int matrix[matrixSize][matrixSize], int startX, 
 const int boardSize = 10;
 bool visited[boardSize][boardSize];
 
+// Verifica que el camino sea seguro
 bool isSafe(int x, int y) {
     return (x >= 0 && y >= 0 && x < boardSize && y < boardSize && !visited[x][y]);
 }
 
+// Busca la forma de alcanzar el destino
 bool solveMaze(int x, int y, int destX, int destY, std::vector<std::pair<int, int>>& path) {
     if (x == destX && y == destY) {
         return true; // Llegamos al destino
@@ -168,6 +170,7 @@ bool solveMaze(int x, int y, int destX, int destY, std::vector<std::pair<int, in
     return false;
 }
 
+// Creacion de los samurai y sus atributos
 struct Samurai {
     int uniqueId;
     int age;
@@ -273,26 +276,28 @@ gboolean clearLabelCallback(gpointer data) {
     gtk_label_set_text(advertencias, " ");
     return G_SOURCE_REMOVE;  // Indica que se debe eliminar la fuente de temporización
 }
-
+// Creacion de obstaculos - Yari
 void yari(GtkWidget *widget, gpointer data) {
     obstype = 1;
     std::cout<< "Obstáculo seleccionado: Yari\n";
     gtk_label_set_text(advertencias, "Obstáculo seleccionado: Yari");
     g_timeout_add(1000, clearLabelCallback, NULL);
 }
+// Creacion de obstaculos - AYF
 void ayf(GtkWidget *widget, gpointer data) {
     obstype = 2;
     std::cout<< "Obstáculo seleccionado: Arco y flecha\n";
     gtk_label_set_text(advertencias, "Obstáculo seleccionado: Arco y flecha");
     g_timeout_add(1000, clearLabelCallback, NULL);
 }
+// Creacion de obstaculos - TNA
 void tna(GtkWidget *widget, gpointer data) {
     obstype = 3;
     std::cout<< "Obstáculo seleccionado: Tanegashima\n";
     gtk_label_set_text(advertencias, "Obstáculo seleccionado: Tanegashima");
     g_timeout_add(1000, clearLabelCallback, NULL);
 }
-
+// Contador de Iteraciones
 void iteraciones(GtkWidget *widget, gpointer data) {
     sprintf(sendBuffer, "%d", cantK);
     static int units = 0;
@@ -378,7 +383,7 @@ void iteraciones(GtkWidget *widget, gpointer data) {
 
     }
 }
-
+// Main
 int main(int argc, char *argv[]) {
     sprintf(sendBuffer, "%d", cantK);
     GtkBuilder *builder;
@@ -405,7 +410,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-
+    // Creacion de la matriz
     for (int fila = 0; fila < 10; fila++) {
         for (int columna = 0; columna < 10; columna++) {
             char nombreBoton[20];
