@@ -5,6 +5,23 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstdlib>
+#include <iostream>
+#include <cstring>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <ctime>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <gtk/gtk.h>
+#include <sstream>
+#include <iostream>
+#include <ctime>
+#include <vector>
+#include <thread>
+#include <chrono>
+
+using namespace std;
 
 GtkWidget *window;
 GtkWidget *botones[10][10], *iter, *yr, *af, *tn;
@@ -78,12 +95,179 @@ void iteraciones(GtkWidget *widget, gpointer data) {
         std::cout<<"Iterando\n";
     }
 }
+
+int suma(int a, int b) {
+    return a + b;
+}
+
+const int matrixSize = 10;
+
+struct Node {
+    int x, y;
+    int f, g, h;
+    Node* parent;
+
+    Node(int x, int y, int g, int h, Node* parent)
+            : x(x), y(y), g(g), h(h), parent(parent) {
+        f = g + h;
+    }
+};
+
+// Funcion que calcula la distancia de manhattan para dos nodos
+int calculateManhattanDistance(int x1, int y1, int x2, int y2) {
+    return abs(x1 - x2) + abs(y1 - y2);
+}
+
+// Funcion que encuentra el camino del samurai a la meta
+vector<pair<int, int>> findPath(int matrix[matrixSize][matrixSize], int startX, int startY, int targetX, int targetY) {
+    vector<pair<int, int>> path;
+    priority_queue<Node*, vector<Node*>, function<bool(Node*, Node*)>> openSet(
+            [](Node* a, Node* b) { return a->f > b->f; });
+
+    Node* startNode = new Node(startX, startY, 0, calculateManhattanDistance(startX, startY, targetX, targetY), nullptr);
+    openSet.push(startNode);
+
+    while (!openSet.empty()) {
+        Node* currentNode = openSet.top();
+        openSet.pop();
+
+        if (currentNode->x == targetX && currentNode->y == targetY) {
+            // Reconstruye el camino
+            while (currentNode != nullptr) {
+                path.emplace_back(currentNode->x, currentNode->y);
+                currentNode = currentNode->parent;
+            }
+            reverse(path.begin(), path.end());
+            break;
+        }
+
+        // Genera nodos vecinos
+        const int dx[4] = {1, -1, 0, 0};
+        const int dy[4] = {0, 0, 1, -1};
+        for (int i = 0; i < 4; ++i) {
+            int nextX = currentNode->x + dx[i];
+            int nextY = currentNode->y + dy[i];
+
+            if (nextX >= 0 && nextX < matrixSize && nextY >= 0 && nextY < matrixSize && matrix[nextX][nextY] == 0) {
+                int g = currentNode->g + 1;
+                int h = calculateManhattanDistance(nextX, nextY, targetX, targetY);
+                Node* neighbor = new Node(nextX, nextY, g, h, currentNode);
+                openSet.push(neighbor);
+            }
+        }
+    }
+
+    // Limpia la memoria
+    while (!openSet.empty()) {
+        delete openSet.top();
+        openSet.pop();
+    }
+
+    return path;
+}
+
+const int boardSize = 10;
+bool visited[boardSize][boardSize];
+
+bool isSafe(int x, int y) {
+    return (x >= 0 && y >= 0 && x < boardSize && y < boardSize && !visited[x][y]);
+}
+
+bool solveMaze(int x, int y, int destX, int destY, std::vector<std::pair<int, int>>& path) {
+    if (x == destX && y == destY) {
+        return true; // Llegamos al destino
+    }
+
+    if (isSafe(x, y)) {
+        visited[x][y] = true;
+        path.push_back(std::make_pair(x, y));
+
+        // Movimiento hacia abajo
+        if (solveMaze(x + 1, y, destX, destY, path)) {
+            return true;
+        }
+
+        // Movimiento hacia la derecha
+        if (solveMaze(x, y + 1, destX, destY, path)) {
+            return true;
+        }
+
+        // Si no se encuentra una solución en esta dirección, retrocedemos
+        visited[x][y] = false;
+        path.pop_back();
+    }
+
+    return false;
+}
+
+struct Samurai {
+    int uniqueId;
+    int age;
+    double survivalProbability;
+    int expectedGenerations;
+    int emotionalIntelligence;
+    int physicalCondition;
+    int upperBodyStrength;
+    int lowerBodyStrength;
+    double resistance;
+
+    Samurai(int generation) {
+        // Generar un identificador único aleatorio de 7 dígitos en cada generación
+        uniqueId = rand() % 10000000 + 1000000;
+
+        if (generation == 1) {
+            // Inicializar los atributos en la primera generación
+            age = 18;
+            survivalProbability = 20.0;
+            expectedGenerations = 4;
+            emotionalIntelligence = 4;
+            physicalCondition = 4;
+            upperBodyStrength = 4;
+            lowerBodyStrength = 4;
+            resistance = calculateResistance(); // Calcular la resistencia inicial
+        }
+        else {
+            evolve(); // Evolucionar los atributos en generaciones posteriores
+        }
+    }
+
+    double calculateResistance() const {
+        return age + emotionalIntelligence + physicalCondition + upperBodyStrength + lowerBodyStrength;
+    }
+
+    // Función para aplicar el incremento del 50% en cada atributo en cada generación
+    void evolve() {
+        age = static_cast<int>(age * 1.2);
+        survivalProbability *= 1.5;
+        expectedGenerations = static_cast<int>(expectedGenerations - 1);
+        emotionalIntelligence = static_cast<int>(emotionalIntelligence * 1.5);
+        physicalCondition = static_cast<int>(physicalCondition * 1.5);
+        upperBodyStrength = static_cast<int>(upperBodyStrength * 1.5);
+        lowerBodyStrength = static_cast<int>(lowerBodyStrength * 1.5);
+        resistance = calculateResistance();
+    }
+
+    void printAttributes() const {
+        cout << "Samurái " << uniqueId << " - Atributos:\n";
+        cout << "Edad: " << age << "\n";
+        cout << "Probabilidad de supervivencia: " << survivalProbability << "%\n";
+        cout << "Generaciones esperadas de supervivencia: " << expectedGenerations << "\n";
+        cout << "Inteligencia emocional: " << emotionalIntelligence << "\n";
+        cout << "Condición física: " << physicalCondition << "\n";
+        cout << "Fuerza en tronco superior: " << upperBodyStrength << "\n";
+        cout << "Fuerza en tronco inferior: " << lowerBodyStrength << "\n";
+        cout << "Resistencia: " << resistance << "\n";
+    }
+
+};
+
+
 int main(int argc, char *argv[]) {
     sprintf(buffer, "%d", cantK);
     GtkBuilder *builder;
     gtk_init(&argc, &argv);
     builder = gtk_builder_new();
-    gtk_builder_add_from_file(builder, "/home/aleprominecraft/Documents/github/Main-ProyectoII/GladeProyectoII.glade", NULL);
+    gtk_builder_add_from_file(builder, "/home/tomeito/CLionProjects/Main-ProyectoII/GladeProyectoII.glade", NULL);
 
     //Declaración de objetos
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
@@ -117,6 +301,70 @@ int main(int argc, char *argv[]) {
     cantKoban = GTK_LABEL(gtk_builder_get_object(builder, "cantKoban"));
     advertencias = GTK_LABEL(gtk_builder_get_object(builder, "advertencias"));
     gtk_label_set_text(cantKoban, buffer);
+
+    int matrix[10][10]; // Declara la matrix 10x10
+    int cont = 0;
+    srand(time(0));
+
+    // Inicia la matriz con ceros
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            matrix[i][j] = 0;
+        }
+    }
+
+    for (int i = 0; i < 9; i++) {
+        matrix[rand() % 10][rand() % 10] = 1;
+    }
+
+    // Defina el punto de inicio y de llegada de los samurai
+    int startX = 0;
+    int startY = 0;
+    int targetX = 9;
+    int targetY = 9;
+
+    vector<pair<int, int>> path = findPath(matrix, startX, startY, targetX, targetY);
+
+    // Enseña el camino del samurai
+    cout << "Camino del samurai (usando pathfinding): ";
+    for (const auto& point : path) {
+        cout << "(" << point.first << ", " << point.second << ") ";
+    }
+    cout << endl;
+
+    std::srand(static_cast<unsigned>(std::time(0)));
+
+    const int numGenerations = 5;
+
+    Samurai bestSamurai(1);  // El primer samurái es el mejor en la primera generación
+
+    for (int generation = 1; generation <= numGenerations; generation++) {
+        bestSamurai = Samurai(generation); // Generar un nuevo samurái con el uniqueId cambiado para la generación actual
+    }
+
+    int inputX = 0;
+    int inputY = 0;
+    int destX = boardSize - 1;
+    int destY = boardSize - 1;
+    std::vector<std::pair<int, int>> path1;
+
+    auto start = std::chrono::high_resolution_clock::now(); // Iniciar el temporizador
+
+    if (solveMaze(inputX, inputY, destX, destY, path1)) {
+        std::cout << "Camino encontrado (usando backtracking):" << std::endl;
+        for (const auto& step : path1) {
+            std::cout << "(" << step.first << ", " << step.second << ")" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Retraso de 1 segundo entre movimientos
+        }
+    } else {
+        std::cout << "No se encontró un camino." << std::endl;
+    }
+
+    auto end = std::chrono::high_resolution_clock::now(); // Detener el temporizador
+    std::chrono::duration<double> duration = end - start;
+
+    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos" << std::endl;
+
     /* LO DEL SOCKET
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 

@@ -66,23 +66,11 @@
 				},
 				{
 					"backtrace" : 4,
-					"path" : "/usr/include/pango-1.0"
+					"path" : "/usr/include/at-spi2-atk/2.0"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "/usr/include/cairo"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/gdk-pixbuf-2.0"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/freetype2"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/harfbuzz"
+					"path" : "/usr/include/at-spi-2.0"
 				},
 				{
 					"backtrace" : 4,
@@ -94,35 +82,19 @@
 				},
 				{
 					"backtrace" : 4,
-					"path" : "/usr/include/glib-2.0"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/lib/x86_64-linux-gnu/glib-2.0/include"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/atk-1.0"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/blkid"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/libmount"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/pixman-1"
-				},
-				{
-					"backtrace" : 4,
-					"path" : "/usr/include/libpng16"
-				},
-				{
-					"backtrace" : 4,
 					"path" : "/usr/include/gio-unix-2.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/cairo"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/pango-1.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/harfbuzz"
 				},
 				{
 					"backtrace" : 4,
@@ -130,11 +102,43 @@
 				},
 				{
 					"backtrace" : 4,
-					"path" : "/usr/include/at-spi2-atk/2.0"
+					"path" : "/usr/include/atk-1.0"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "/usr/include/at-spi-2.0"
+					"path" : "/usr/include/pixman-1"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/uuid"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/freetype2"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/gdk-pixbuf-2.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/libpng16"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/libmount"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/blkid"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/glib-2.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/lib/x86_64-linux-gnu/glib-2.0/include"
 				}
 			],
 			"language" : "CXX",
@@ -177,11 +181,6 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lharfbuzz",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
 				"fragment" : "-lpangocairo-1.0",
 				"role" : "libraries"
 			},
@@ -192,17 +191,22 @@
 			},
 			{
 				"backtrace" : 2,
+				"fragment" : "-lharfbuzz",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
 				"fragment" : "-latk-1.0",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lcairo",
+				"fragment" : "-lcairo-gobject",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lcairo-gobject",
+				"fragment" : "-lcairo",
 				"role" : "libraries"
 			},
 			{
@@ -217,12 +221,12 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lglib-2.0",
+				"fragment" : "-lgobject-2.0",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lgobject-2.0",
+				"fragment" : "-lglib-2.0",
 				"role" : "libraries"
 			},
 			{
@@ -237,11 +241,6 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lharfbuzz",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
 				"fragment" : "-lpangocairo-1.0",
 				"role" : "libraries"
 			},
@@ -252,17 +251,22 @@
 			},
 			{
 				"backtrace" : 2,
+				"fragment" : "-lharfbuzz",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
 				"fragment" : "-latk-1.0",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lcairo",
+				"fragment" : "-lcairo-gobject",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lcairo-gobject",
+				"fragment" : "-lcairo",
 				"role" : "libraries"
 			},
 			{
@@ -277,12 +281,12 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lglib-2.0",
+				"fragment" : "-lgobject-2.0",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-lgobject-2.0",
+				"fragment" : "-lglib-2.0",
 				"role" : "libraries"
 			},
 			{
